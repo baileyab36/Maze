@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Maze extends JApplet {
     private int tileSize = 50;
-    private int tileNum = 5;
+    private int tileNum = 10;
     private int[][] map;
 
     public void init() {
@@ -114,36 +114,39 @@ public class Maze extends JApplet {
             //all tiles around the next tile are free
 
             //check all around northY
-            if (y != 0 && map[x][northY] == 0) {
-                if (x == 0 || map[westX][northY] == 0) {
-                    if (x == lastTile || map[eastX][northY] == 0)
-                        north = true;
-                }
-            }
+            if (y != 0 && map[x][northY] == 0)
+                //one above
+                if (northY == 0 || map[x][northY - 1] == 0)
+                    //to the left
+                    if (x == 0 || map[westX][northY] == 0)
+                        //to the right
+                        if (x == lastTile || map[eastX][northY] == 0)
+                            north = true;
+
 
             //check all around southY
-            if (y != lastTile && map[x][southY] == 0) {
-                if (x == 0 || map[westX][southY] == 0) {
-                    if (x == lastTile || map[eastX][southY] == 0)
-                        south = true;
-                }
-            }
+            if (y != lastTile && map[x][southY] == 0)
+                if (southY == lastTile || map[x][southY + 1] == 0)
+                    if (x == 0 || map[westX][southY] == 0)
+                        if (x == lastTile || map[eastX][southY] == 0)
+                            south = true;
+
 
             //check all around westX
-            if (x != 0 && map[westX][y] == 0) {
-                if (y == 0 || map[westX][northY] == 0) {
-                    if (y == lastTile || map[westX][southY] == 0)
-                        west = true;
-                }
-            }
+            if (x != 0 && map[westX][y] == 0)
+                if (westX == 0 || map[westX - 1][y] == 0)
+                    if (y == 0 || map[westX][northY] == 0)
+                        if (y == lastTile || map[westX][southY] == 0)
+                            west = true;
+
 
             //check all around eastX
-            if (x != lastTile && map[eastX][y] == 0) {
-                if (y == 0 || map[eastX][northY] == 0) {
-                    if (y == lastTile || map[eastX][southY] == 0)
-                        east = true;
-                }
-            }
+            if (x != lastTile && map[eastX][y] == 0)
+                if (eastX == lastTile || map[eastX + 1][y] == 0)
+                    if (y == 0 || map[eastX][northY] == 0)
+                        if (y == lastTile || map[eastX][southY] == 0)
+                            east = true;
+
 
             printDirections(north, south, east, west);
 
