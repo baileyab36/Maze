@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5746e96d-c0ec-41ca-bb7c-ad5ae4295b85" name="Default" comment="betterNotTouchingRandomPicker() fixed: added caddy corner check to notTouchingRandomPicker()&#10;noticed bug in skipPicker: makes lines when tileNum is even">
+    <list default="true" id="5746e96d-c0ec-41ca-bb7c-ad5ae4295b85" name="Default" comment="">
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/Maze/Maze.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Maze.java" afterPath="$PROJECT_DIR$/src/Maze.java" />
     </list>
     <ignored path="Maze.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -121,6 +120,10 @@
       </pane>
       <pane id="Scope" />
     </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
   </component>
   <component name="RunManager" selected="Applet.Unnamed">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -412,7 +415,14 @@
       <option name="project" value="LOCAL" />
       <updated>1475782179346</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="betterNotTouchingRandomPicker() fixed: added caddy corner check to notTouchingRandomPicker()&#10;noticed bug in skipPicker: makes lines when tileNum is even">
+      <created>1475988869929</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1475988869929</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="ToolWindowManager">
