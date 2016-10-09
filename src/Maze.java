@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,12 +8,11 @@ import java.awt.*;
 
 public class Maze extends JApplet {
     private int tileSize = 50;
-    private int tileNum = 10;
+    private int tileNum = 12;
     private int[][] map;
 
     public void init() {
         getContentPane().setBackground(Color.gray);
-        setSize(tileSize * tileNum, tileSize * tileNum);
 
         map = new int[tileNum][tileNum];
         for (int i = 0; i < tileNum; i++) {
@@ -20,7 +20,7 @@ public class Maze extends JApplet {
                 map[i][j] = 0;
             }
         }
-        notTouchingRandomPicker();
+        skipPicker();
 
         /* for printing the map array
         for (int i = 0; i < tileNum; i++) {
@@ -28,6 +28,8 @@ public class Maze extends JApplet {
                 System.out.print("map[" + i + "][" + j + "] = " + map[i][j] + "\n");
             }
         }*/
+        //setSize(tileSize * tileNum, tileSize * tileNum);
+
     }
 
 
@@ -45,6 +47,7 @@ public class Maze extends JApplet {
                     page.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
             }
         }
+        setSize(tileSize * tileNum, tileSize * tileNum);
     }
 
     //WORKS!
@@ -63,8 +66,9 @@ public class Maze extends JApplet {
     }
 
 
-    //WORKS
-    //skips a spot every time
+    //Almost works
+    //skips a spot every time if tileNum is odd
+    //makes lines if tile num is even
     private void skipPicker() {
 
         for (int i = 0; i < tileNum; i++) {
@@ -82,7 +86,7 @@ public class Maze extends JApplet {
     private void notTouchingRandomPicker() {
         boolean north, south, east, west;
         boolean canContinue = true;
-        int numDirections = 2;
+        int numDirections;
 
         int x = 0;
         int y = 0;
@@ -96,6 +100,9 @@ public class Maze extends JApplet {
             System.out.println("ran = " + ran);
 
             //if its false you cant go there
+
+
+            //restart booleans
             north = false;
             south = false;
             west = false;
@@ -148,7 +155,9 @@ public class Maze extends JApplet {
                             east = true;
 
 
+            print("Available Directions: \n");
             printDirections(north, south, east, west);
+            numDirections = calculateNumDirections(north, south, east, west);
 
 
             //making map based on directions available
@@ -158,23 +167,14 @@ public class Maze extends JApplet {
             if (x == 0 && y == 0 && map[x][y] == 0) {
                 System.out.println("First time through loop");
                 map[x][y] = 1;
+                south = true;
+                east = true;
                 //randomly choose right or down for moving
-                //must be changed here or it wont work.
-                /*if (ran < 2) {
-                    x++;
-                    north = false;
-                } else {
-                    y++;
-                    east = false;
-                }*/
-
 
             } else {
 
                 //once numDirections has been pared down to one direction, the loop ends
                 while (numDirections > 1) {
-                    print("choosing directions");
-
 
                     //randomly choose an available direction and make the others false
                     //loop should run a maximum of three times
@@ -208,6 +208,7 @@ public class Maze extends JApplet {
                             }
                             break;
                     }
+                    print("Choosing Directions: \n");
                     printDirections(north, south, east, west);
 
 
@@ -222,8 +223,9 @@ public class Maze extends JApplet {
                     print("numDirections = " + numDirections + "\n");
 
                 }
+                print("done choosing Directions\n");
 
-                //only one direction is now true
+                //one direction is now true OR none of them are
                 //put tiles in map as long as you can
                 if (north) {
                     y = northY;
@@ -247,10 +249,253 @@ public class Maze extends JApplet {
             if (numDirections == 0)
                 canContinue = false;
 
+            print("numDirections = " + numDirections + "\n");
             chosenDirection(north, south, east, west);
             print("x = " + x + "  y= " + y);
             print("\nstill continuing:" + canContinue + "\n\n");
         }
+    }
+
+
+    //adds a caddy corner check
+    private void betterNotTouchingRandomPicker() {
+        boolean north, south, east, west;
+        boolean canContinue = true;
+        int numDirections;
+
+        int x = 0;
+        int y = 0;
+        int lastTile = tileNum - 1;
+
+
+        while (canContinue) {
+            // remake ran every time
+
+            int ran = (int) (Math.random() * 4);
+            System.out.println("ran = " + ran);
+
+            //if its false you cant go there
+
+            //make new ints for my own sake
+            int northY = y - 1;
+            int southY = y + 1;
+            int westX = x - 1;
+            int eastX = x + 1;
+
+
+            //check all around each spot to see if it will be touching IF it moves there
+            //also check availability
+            north = checkAround(x, northY);
+            south = checkAround(x, southY);
+            west = checkAround(westX, y);
+            east = checkAround(eastX, y);
+
+
+            print("Available Directions: \n");
+            printDirections(north, south, east, west);
+            numDirections = calculateNumDirections(north, south, east, west);
+
+
+            //making map based on directions available
+
+            //if its the first time around x and y will be zero.
+            //we always start in the top left corner
+            if (x == 0 && y == 0 && map[x][y] == 0) {
+                System.out.println("First time through loop");
+                map[x][y] = 1;
+                //randomly choose right or down for moving
+
+            } else {
+
+                //once numDirections has been pared down to one direction, the loop ends
+                while (numDirections > 1) {
+
+                    //randomly choose an available direction and make the others false
+                    //loop should run a maximum of three times
+                    switch (ran) {
+                        case 0:
+                            if (north) {
+                                south = false;
+                                west = false;
+                                east = false;
+                            }
+                            break;
+                        case 1:
+                            if (south) {
+                                north = false;
+                                west = false;
+                                east = false;
+                            }
+                            break;
+                        case 2:
+                            if (west) {
+                                north = false;
+                                south = false;
+                                east = false;
+                            }
+                            break;
+                        case 3:
+                            if (east) {
+                                north = false;
+                                south = false;
+                                west = false;
+                            }
+                            break;
+                    }
+                    print("Choosing Directions: \n");
+                    printDirections(north, south, east, west);
+
+
+                    //if ran chose a direction that was already false it will move on to the next one until it finds the one that is true.
+                    ran++;
+                    if (ran == 4) {
+                        ran = 0;
+                    }
+
+                    //update direction count
+                    numDirections = calculateNumDirections(north, south, west, east);
+                    print("numDirections = " + numDirections + "\n");
+
+                }
+                print("done choosing Directions\n");
+
+                //one direction is now true OR none of them are
+                //put tiles in map as long as you can
+                if (north) {
+                    y = northY;
+                } else if (south) {
+                    y = southY;
+                } else if (west) {
+                    x = westX;
+                } else if (east) {
+                    x = eastX;
+                }
+
+                map[x][y] = 1;
+            }
+
+
+            //will be either one or zero
+            //this determines whether the application is killed.
+            numDirections = calculateNumDirections(north, south, west, east);
+
+
+            if (numDirections == 0)
+                canContinue = false;
+
+            //debugging stuff
+            print("numDirections = " + numDirections + "\n");
+            chosenDirection(north, south, east, west);
+            print("x = " + x + "  y= " + y);
+            print("\nstill continuing:" + canContinue + "\n\n");
+        }
+    }
+
+
+    private boolean checkAround(int x, int y) {
+        boolean available = false;
+
+        //checks to make sure that the tile checked is within the array
+        //array goes from 0 to tileNum-1
+        boolean onBoard = x != -1 && x != tileNum && y != -1 && y != tileNum;
+
+        if (onBoard) {
+            //check up down right left first
+            /*
+            boolean north, south, east, west;
+
+
+            north = false;
+            south = false;
+            east = false;
+            west = false;
+            */
+
+            int northY = y - 1;
+            int southY = y + 1;
+            int westX = x - 1;
+            int eastX = x + 1;
+
+            //int lastTile = tileNum - 1;
+
+            int numDirections = 0;
+
+            if (northY == -1 || map[x][northY] == 0)
+                numDirections++;
+            if (southY == tileNum || map[x][southY] == 0)
+                numDirections++;
+            if (westX == -1 || map[westX][y] == 0)
+                numDirections++;
+            if (eastX == tileNum || map[eastX][y] == 0)
+                numDirections++;
+
+            if (numDirections >= 3) {
+                available = true;
+            }
+
+            //check caddy corner
+            numDirections = 0;
+            if (available) {
+                //north west corner
+                //if the caddy corner is not the board
+                if (westX == -1 || northY == -1)
+                    numDirections++;
+                    //then if it is unoccupied were good
+                else if (map[westX][northY] == 0)
+                    numDirections++;
+                    //else the caddy corner is occupied.
+                    //but if it is connected to the last tile then its cool
+                else if (map[x][northY] == 1 || map[westX][y] == 1)
+                    numDirections++;
+
+
+                //southwest corner
+                //if the caddy corner is not the board
+                if (westX == -1 || southY == tileNum)
+                    numDirections++;
+                    //then if it is unoccupied were good
+                else if (map[westX][southY] == 0)
+                    numDirections++;
+                    //else the caddycorner is occupied.
+                    //but if it is connected to the last tile then its cool
+                else if (map[x][southY] == 1 || map[westX][y] == 1)
+                    numDirections++;
+
+
+                //north east corner
+                //if the caddy corner is not the board then it wont block the movement
+                if (eastX == tileNum || northY == -1)
+                    numDirections++;
+                    //then if it is unoccupied were good
+                else if (map[eastX][northY] == 0)
+                    numDirections++;
+                    //else the caddycorner is occupied.
+                    //but if it is connected to the last tile then its cool
+                else if (map[x][northY] == 1 || map[eastX][y] == 1)
+                    numDirections++;
+
+
+                //southeast corner
+                //if the caddy corner is not the board
+                if (eastX == tileNum || southY == tileNum)
+                    numDirections++;
+                    //then if it is unoccupied were good
+                else if (map[eastX][southY] == 0)
+                    numDirections++;
+                    //else the caddycorner is occupied.
+                    //but if it is connected to the last tile then its cool
+                else if (map[x][southY] == 1 || map[eastX][y] == 1)
+                    numDirections++;
+
+
+                //only one caddy corner can be connected and it must be the block that [x][y] comes from
+                if (numDirections != 4) {
+                    available = false;
+                }
+            }
+        }
+
+        return available;
     }
 
 
@@ -273,7 +518,7 @@ public class Maze extends JApplet {
     }
 
     private void printDirections(boolean north, boolean south, boolean east, boolean west) {
-        System.out.println("north: " + north + "\t\tsouth: " + south + "\t\twest: " + west + "\t\teast: " + east);
+        print("\tnorth: " + north + "\t\tsouth: " + south + "\t\twest: " + west + "\t\teast: " + east + "\n");
     }
 
     private void chosenDirection(boolean north, boolean south, boolean east, boolean west) {
@@ -281,12 +526,15 @@ public class Maze extends JApplet {
         print("Direction chosen: ");
         if (north)
             print("north");
-        if (south)
+        else if (south)
             print("South");
-        if (west)
+        else if (west)
             print("west");
-        if (east)
+        else if (east)
             print("east");
+        else
+            print("none");
+
         print("\n");
     }
 
