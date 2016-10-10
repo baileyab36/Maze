@@ -7,8 +7,8 @@ import java.awt.*;
 //puts tiles on a background.
 
 public class Maze extends JApplet {
-    private int tileSize = 50;
-    private int tileNum = 12;
+    private int tileSize = 10;
+    private int tileNum = 45;
     private int[][] map;
 
     public void init() {
@@ -20,7 +20,7 @@ public class Maze extends JApplet {
                 map[i][j] = 0;
             }
         }
-        skipPicker();
+        betterNotTouchingRandomPicker();
 
         /* for printing the map array
         for (int i = 0; i < tileNum; i++) {
@@ -265,8 +265,6 @@ public class Maze extends JApplet {
 
         int x = 0;
         int y = 0;
-        int lastTile = tileNum - 1;
-
 
         while (canContinue) {
             // remake ran every time
@@ -301,7 +299,6 @@ public class Maze extends JApplet {
             //if its the first time around x and y will be zero.
             //we always start in the top left corner
             if (x == 0 && y == 0 && map[x][y] == 0) {
-                System.out.println("First time through loop");
                 map[x][y] = 1;
                 //randomly choose right or down for moving
 
@@ -384,7 +381,7 @@ public class Maze extends JApplet {
                 canContinue = false;
 
             //debugging stuff
-            print("numDirections = " + numDirections + "\n");
+            //print("numDirections = " + numDirections + "\n");
             chosenDirection(north, south, east, west);
             print("x = " + x + "  y= " + y);
             print("\nstill continuing:" + canContinue + "\n\n");
@@ -399,24 +396,13 @@ public class Maze extends JApplet {
         //array goes from 0 to tileNum-1
         boolean onBoard = x != -1 && x != tileNum && y != -1 && y != tileNum;
 
-        if (onBoard) {
+        if (onBoard && map[x][y] == 0) {
             //check up down right left first
-            /*
-            boolean north, south, east, west;
-
-
-            north = false;
-            south = false;
-            east = false;
-            west = false;
-            */
 
             int northY = y - 1;
             int southY = y + 1;
             int westX = x - 1;
             int eastX = x + 1;
-
-            //int lastTile = tileNum - 1;
 
             int numDirections = 0;
 
@@ -433,6 +419,7 @@ public class Maze extends JApplet {
                 available = true;
             }
 
+            //only check caddy if connected tiles are available
             //check caddy corner
             numDirections = 0;
             if (available) {
@@ -542,3 +529,8 @@ public class Maze extends JApplet {
         System.out.print(printString);
     }
 }
+
+
+/*Discussion:
+How do I get it so that it looks two spaces ahead
+ */
